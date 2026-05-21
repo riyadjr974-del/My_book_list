@@ -1,65 +1,23 @@
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>আমার বইয়ের তালিকা</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f9f9f9; }
-        h2 { text-align: center; color: #333; margin-bottom: 20px; font-size: 28px; }
-        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #e0e0e0; padding: 12px 15px; text-align: left; }
-        th { background-color: #4CAF50; color: white; font-weight: bold; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        tr:hover { background-color: #f1f1f1; }
-        .btn { padding: 6px 12px; background-color: #008CBA; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; display: inline-block; text-align: center; transition: 0.3s; }
-        .btn:hover { background-color: #005f7a; }
-        .btn-audio { background-color: #f44336; }
-        .btn-audio:hover { background-color: #da190b; }
-        .empty { color: #888; font-style: italic; }
-    </style>
-</head>
-<body>
+from flask import Flask, render_template
+import pandas as pd
 
-    <div class="container">
-        <h2>📚 আমার ইসলামিক বইয়ের তালিকা</h2>
-        
-        <div style="overflow-x:auto;">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 10%;">ক্রমিক</th>
-                        <th style="width: 50%;">বইয়ের নাম</th>
-                        <th style="width: 20%;">PDF লিংক</th>
-                        <th style="width: 20%;">Audio লিংক</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for book in books %}
-                    <tr>
-                        <td>{{ book.get('ক্রমিক', '') }}</td>
-                        <td>{{ book.get('বইয়ের নাম', '') }}</td>
-                        <td>
-                            {% if book.get('link') and str(book.get('link')).strip() != '' %}
-                                <a class="btn" href="{{ book['link'] }}" target="_blank">📖 PDF পড়ুন</a>
-                            {% else %}
-                                <span class="empty">লینک নেই</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if book.get('AUDIO') and str(book.get('AUDIO')).strip() != '' %}
-                                <a class="btn btn-audio" href="{{ book['AUDIO'] }}" target="_blank">🎧 Audio শুনুন</a>
-                            {% else %}
-                                <span class="empty">Audio নেই</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+app = Flask(__name__)
 
-</body>
-</html>
+def load_books():
+    try:
+        # books.csv থেকে ডেটা নেওয়া হচ্ছে
+        df = pd.read_csv("books.csv", skiprows=1)
+        df.columns = df.columns.str.strip()
+        df = df.fillna("")
+        return df.to_dict(orient="records")
+    except Exception as e:
+        print("Error loading csv:", e)
+        return []
+
+@app.route('/')
+def home():
+    books = load_books()
+    return render_template('index.html', books=books)
+
+if __name__ == '__main__':
+    app.run()
