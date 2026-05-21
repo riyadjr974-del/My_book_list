@@ -18,28 +18,38 @@
         .btn-audio { background-color: #f44336; }
         .btn-audio:hover { background-color: #da190b; }
         .empty { color: #888; font-style: italic; }
+        
+        /* Checkbox er design */
+        .check-box { transform: scale(1.5); cursor: pointer; }
+        .completed { background-color: #d4edda !important; }
+        .completed td { color: #555; }
+        .completed-text { text-decoration: line-through; color: #888; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>📚 Member Book List (1st step)</h2>
+        <h2>Member Book List (1st step)</h2>
         
         <div style="overflow-x:auto;">
             <table>
                 <thead>
                     <tr>
+                        <th style="width: 5%; text-align: center;">পড়া শেষ?</th>
                         <th style="width: 10%;">ক্রমিক</th>
-                        <th style="width: 50%;">বইয়ের নাম</th>
+                        <th style="width: 45%;">বইয়ের নাম</th>
                         <th style="width: 20%;">PDF লিংক</th>
                         <th style="width: 20%;">Audio লিংক</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for book in books %}
-                    <tr>
+                    <tr id="row-{{ loop.index }}">
+                        <td style="text-align: center;">
+                            <input type="checkbox" class="check-box" id="book-{{ loop.index }}" onclick="saveProgress({{ loop.index }})">
+                        </td>
                         <td>{{ book.get('serial', '') }}</td>
-                        <td>{{ book.get('name', '') }}</td>
+                        <td id="name-{{ loop.index }}">{{ book.get('name', '') }}</td>
                         <td>
                             {% if book.get('link') %}
                                 {% set links = book.get('link')|string %}
@@ -66,6 +76,40 @@
             </table>
         </div>
     </div>
+
+    <script>
+        // Page load howar shathe shathe check korbe kon boi gulo age theke read mark kora
+        window.onload = function() {
+            let totalBooks = {{ books|length }};
+            for (let i = 1; i <= totalBooks; i++) {
+                let isChecked = localStorage.getItem('book-' + i);
+                if (isChecked === 'true') {
+                    document.getElementById('book-' + i).checked = true;
+                    markAsDone(i, true);
+                }
+            }
+        };
+
+        // Checkbox e click korle browser e save korbe
+        function saveProgress(id) {
+            let checkBox = document.getElementById('book-' + id);
+            localStorage.setItem('book-' + id, checkBox.checked);
+            markAsDone(id, checkBox.checked);
+        }
+
+        // Pora shesh hole row er color ektu shobuj hobe r namer upore dag porbe
+        function markAsDone(id, isDone) {
+            let row = document.getElementById('row-' + id);
+            let name = document.getElementById('name-' + id);
+            if (isDone) {
+                row.classList.add('completed');
+                name.classList.add('completed-text');
+            } else {
+                row.classList.remove('completed');
+                name.classList.remove('completed-text');
+            }
+        }
+    </script>
 
 </body>
 </html>
