@@ -13,7 +13,7 @@
         th { background-color: #4CAF50; color: white; font-weight: bold; }
         tr:nth-child(even) { background-color: #f8f9fa; }
         tr:hover { background-color: #f1f1f1; }
-        .btn { padding: 6px 12px; background-color: #008CBA; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; display: inline-block; text-align: center; transition: 0.3s; }
+        .btn { padding: 6px 12px; background-color: #008CBA; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; display: inline-block; text-align: center; margin: 3px; transition: 0.3s; }
         .btn:hover { background-color: #005f7a; }
         .btn-audio { background-color: #f44336; }
         .btn-audio:hover { background-color: #da190b; }
@@ -42,14 +42,20 @@
                         <td>{{ book.get('name', '') }}</td>
                         <td>
                             {% if book.get('link') %}
-                                <a class="btn" href="{{ book['link'] }}" target="_blank">📖 PDF পড়ুন</a>
+                                {% set links = book.get('link')|string %}
+                                {% for single_link in links.split() %}
+                                    <a class="btn" href="{{ single_link }}" target="_blank">📖 PDF {{ loop.index }}</a>
+                                {% endfor %}
                             {% else %}
                                 <span class="empty">লিংক নেই</span>
                             {% endif %}
                         </td>
                         <td>
                             {% if book.get('audio') %}
-                                <a class="btn btn-audio" href="{{ book['audio'] }}" target="_blank">🎧 Audio শুনুন</a>
+                                {% set audios = book.get('audio')|string %}
+                                {% for single_audio in audios.split() %}
+                                    <a class="btn btn-audio" href="{{ single_audio }}" target="_blank">🎧 Audio {{ loop.index }}</a>
+                                {% endfor %}
                             {% else %}
                                 <span class="empty">Audio নেই</span>
                             {% endif %}
