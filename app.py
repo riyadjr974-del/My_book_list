@@ -5,9 +5,15 @@ app = Flask(__name__)
 
 def load_books():
     try:
-        # books.csv থেকে ডেটা নেওয়া হচ্ছে
+        # CSV রিড করা হচ্ছে (১ম লাইন বাদ দিয়ে)
         df = pd.read_csv("books.csv", skiprows=1)
-        df.columns = df.columns.str.strip()
+        
+        # শুধুমাত্র প্রথম ৪টি কলাম নেওয়া হচ্ছে
+        df = df.iloc[:, :4]
+        
+        # কলামের নামগুলো ইংরেজিতে সেট করে দিচ্ছি, যাতে বাংলা ফন্ট বা বানানের কোনো সমস্যা না হয়
+        df.columns = ['serial', 'name', 'link', 'audio']
+        
         df = df.fillna("")
         return df.to_dict(orient="records")
     except Exception as e:
