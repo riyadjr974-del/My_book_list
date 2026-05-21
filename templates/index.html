@@ -38,8 +38,8 @@
                 <tbody>
                     {% for book in books %}
                     <tr>
-                        <td>{{ book.get('ক্রমিক', '') }}</td>
-                        <td>{{ book.get('বইয়ের নাম', '') }}</td>
+                        <td>{{ book.get('serial', '') }}</td>
+                        <td>{{ book.get('name', '') }}</td>
                         <td>
                             {% if book.get('link') %}
                                 <a class="btn" href="{{ book['link'] }}" target="_blank">📖 PDF পড়ুন</a>
@@ -48,8 +48,8 @@
                             {% endif %}
                         </td>
                         <td>
-                            {% if book.get('AUDIO') %}
-                                <a class="btn btn-audio" href="{{ book['AUDIO'] }}" target="_blank">🎧 Audio শুনুন</a>
+                            {% if book.get('audio') %}
+                                <a class="btn btn-audio" href="{{ book['audio'] }}" target="_blank">🎧 Audio শুনুন</a>
                             {% else %}
                                 <span class="empty">Audio নেই</span>
                             {% endif %}
